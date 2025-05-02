@@ -1,0 +1,20 @@
+# Global
+project-docs
+*.log
+.DS_Store
+Thumbs.db
+
+# Python
+__pycache__/
+*.py[cod]
+
+# Backend
+backend/venv
+backend/.env*
+!backend/.env.example
+
+# Frontend
+frontend/node_modules
+frontend/.next
+frontend/dist
+frontend/build
