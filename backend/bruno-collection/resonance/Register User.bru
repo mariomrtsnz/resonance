@@ -5,15 +5,24 @@ meta {
 }
 
 post {
-  url: {{base_url}}/api/v1/auth/register/
+  url: {{base_url}}/api/v1/users/register/
   body: json
   auth: none
 }
 
 body:json {
   {
-    "email": "user@example.com",
+    "email": "test@example.com",
     "password": "password123",
     "password2": "password123"
   }
+}
+
+assert {
+  res.status: eq 201
+  res.body.message: eq "User registered successfully."
+}
+
+docs {
+  Registers a new user account using email and password.
 }
