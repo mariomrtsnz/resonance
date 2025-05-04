@@ -1,4 +1,5 @@
 # Global
+.cursorrules
 project-docs
 *.log
 .DS_Store
