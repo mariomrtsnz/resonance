@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     # Local apps
-    'users',
+    'users.apps.UsersConfig',
+    'projects.apps.ProjectsConfig',
 ]
 
 MIDDLEWARE = [
