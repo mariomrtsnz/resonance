@@ -1,14 +1,6 @@
-from django.conf import settings
-from django.db import models
+# This file acts as a proxy to make models available at the standard
+# 'projects.models' path, as expected by Django internal mechanisms.
 
+from .infrastructure.persistence.models import Project
 
-class Project(models.Model):
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='owned_projects')
-    title = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
-    needed_skill_text = models.TextField(blank=True, help_text="Describe the skills or roles needed for this project.")
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-
-    def __str__(self):
-        return self.title 
+__all__ = ['Project'] 

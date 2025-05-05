@@ -10,12 +10,10 @@ class UserContainer(containers.DeclarativeContainer):
     # Configuration (can be loaded from settings or environment)
     # config = providers.Configuration()
 
-    # Infrastructure Layer: Concrete implementations of interfaces
     user_repository: providers.Factory[AbstractUserRepository] = providers.Factory(
         DjangoUserRepository
     )
 
-    # Application Layer: Orchestrates use cases, depends on interfaces
     user_service: providers.Factory[UserService] = providers.Factory(
         UserService,
         user_repository=user_repository,
