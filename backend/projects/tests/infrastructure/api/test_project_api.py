@@ -3,7 +3,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from users.infrastructure.persistence.models import User
-from ..infrastructure.persistence.models import Project
+from ....infrastructure.persistence.models import Project
 
 class ProjectCreateAPIViewTests(APITestCase):
 
@@ -32,7 +32,7 @@ class ProjectCreateAPIViewTests(APITestCase):
         
         self.assertIn('id', response.data)
         self.assertEqual(response.data['title'], self.project_data['title'])
-        self.assertEqual(uuid.UUID(response.data['owner_id']), self.test_user.id) # Compare UUIDs
+        self.assertEqual(uuid.UUID(response.data['owner_id']), self.test_user.id)
         self.assertEqual(response.data['description'], self.project_data['description'])
         self.assertEqual(response.data['needed_skill_text'], self.project_data['needed_skill_text'])
         
@@ -97,9 +97,7 @@ class ProjectCreateAPIViewTests(APITestCase):
         created_project = Project.objects.get(title=null_data['title'])
         
         self.assertEqual(response.data['title'], null_data['title'])
-        # Depending on serializer config, null might become empty string or fail validation
-        # Assuming ProjectCreateSerializer uses allow_blank=True, null becomes ''
-        self.assertEqual(response.data['description'], '') 
-        self.assertEqual(response.data['needed_skill_text'], '')
-        self.assertEqual(created_project.description, '')
-        self.assertEqual(created_project.needed_skill_text, '') 
+        self.assertIsNone(response.data['description'])
+        self.assertIsNone(response.data['needed_skill_text'])
+        self.assertIsNone(created_project.description)
+        self.assertIsNone(created_project.needed_skill_text) 

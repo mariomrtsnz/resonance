@@ -1,24 +1,21 @@
 from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
-# Import models from the new location
 from users.infrastructure.persistence.models import User, UserProfile
 
 class UserRegistrationAPIViewTests(APITestCase):
 
     def setUp(self):
-        # Use namespaced URL if app_name='users_api' is set in urls.py
         self.register_url = reverse('users_api:register') 
         self.user_data = {
             'email': 'test@example.com',
-            'password': 'GoodPassword123', # Ensure it meets potential length requirement
+            'password': 'GoodPassword123',
             'password2': 'GoodPassword123'
         }
 
     def test_successful_registration(self):
         response = self.client.post(self.register_url, self.user_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
-        # Check DB state after successful registration
         self.assertEqual(User.objects.count(), 1)
         self.assertEqual(UserProfile.objects.count(), 1)
         
@@ -30,7 +27,7 @@ class UserRegistrationAPIViewTests(APITestCase):
         
         self.assertEqual(response.data['email'], registered_user.email)
         self.assertEqual(response.data['username'], registered_user.username)
-        self.assertEqual(str(response.data['id']), str(registered_user.id)) # Compare UUIDs
+        self.assertEqual(str(response.data['id']), str(registered_user.id))
 
     def test_registration_mismatched_passwords(self):
         self.user_data['password2'] = 'wrongpassword'
@@ -42,7 +39,6 @@ class UserRegistrationAPIViewTests(APITestCase):
         self.assertEqual(response.data['password'][0], "Password fields didn't match.")
 
     def test_registration_existing_email(self):
-        # Pre-populate database for the test
         existing_user = User.objects.create_user(username='test@example.com', email='test@example.com', password='password123')
         UserProfile.objects.create(user=existing_user)
         self.assertEqual(User.objects.count(), 1)
@@ -55,10 +51,8 @@ class UserRegistrationAPIViewTests(APITestCase):
         }
         response = self.client.post(self.register_url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-        # Ensure no new user/profile was created on failure
         self.assertEqual(User.objects.count(), 1)
         self.assertEqual(UserProfile.objects.count(), 1)
-        # Check the specific error message from the UserService
         self.assertIn('error', response.data)
         self.assertTrue(response.data['error'].startswith("User with email"))
         self.assertTrue(response.data['error'].endswith("already exists."))
@@ -91,7 +85,6 @@ class UserRegistrationAPIViewTests(APITestCase):
         self.assertEqual(response.data['password2'][0], 'This field is required.')
         
     def test_registration_short_password(self):
-        # Assumes serializer enforces min_length=8
         self.user_data['password'] = 'short'
         self.user_data['password2'] = 'short'
         response = self.client.post(self.register_url, self.user_data, format='json')

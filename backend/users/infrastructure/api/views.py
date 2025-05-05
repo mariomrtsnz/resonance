@@ -3,20 +3,10 @@ from rest_framework import generics, permissions, status
 from rest_framework.response import Response
 from rest_framework.request import Request
 
+from users.application.dtos import UserRegistrationDTO, UserDTO
 from users.application.services import UserService, UserRegistrationError
 from users.containers import UserContainer
 from .serializers import UserRegistrationRequestSerializer, UserResponseSerializer
-
-# Note: Views currently interact directly with serializers that use the ORM.
-# Ideally, views would interact with the Application Service. But adding the
-# DTOs layer would introduce mapping boilerplate that is unnecessary for this case
-# since the API response structure closely matches the domain entities.
-# Example:
-# 1. View receives request data.
-# 2. View calls Application Service (e.g., user_service.register_user(data)).
-# 3. Service handles logic (validation, domain ops, repository calls).
-# 4. Service returns result (e.g., domain User or DTO).
-# 5. View uses a *different* serializer/mapper to format the result for the response.
 
 class UserRegistrationView(generics.GenericAPIView):
     serializer_class = UserRegistrationRequestSerializer
@@ -32,16 +22,17 @@ class UserRegistrationView(generics.GenericAPIView):
     ) -> Response:
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
+        validated_data = serializer.validated_data
+
+        registration_dto = UserRegistrationDTO(
+            email=validated_data['email'],
+            password=validated_data['password']
+        )
 
         try:
-            created_user = user_service.register_user(serializer.validated_data)
+            user_dto: UserDTO = user_service.register_user(registration_dto)
             
-            response_data = {
-                "id": created_user.id,
-                "email": created_user.email,
-                "username": created_user.username
-            }
-            response_serializer = UserResponseSerializer(instance=response_data)
+            response_serializer = UserResponseSerializer(instance=user_dto)
             return Response(response_serializer.data, status=status.HTTP_201_CREATED)
             
         except UserRegistrationError as e:
