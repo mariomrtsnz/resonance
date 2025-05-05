@@ -8,7 +8,7 @@ from ....infrastructure.persistence.models import Project
 class ProjectCreateAPIViewTests(APITestCase):
 
     def setUp(self):
-        self.create_url = reverse('projects_api:project-create')
+        self.url = reverse('projects_api:project-list-create')
         user_email = 'testuser@example.com'
         self.test_user = User.objects.create_user(
             username=user_email,
@@ -23,7 +23,7 @@ class ProjectCreateAPIViewTests(APITestCase):
         self.client.force_authenticate(user=self.test_user)
 
     def test_create_project_authenticated(self):
-        response = self.client.post(self.create_url, self.project_data, format='json')
+        response = self.client.post(self.url, self.project_data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         
@@ -47,7 +47,7 @@ class ProjectCreateAPIViewTests(APITestCase):
             'description': 'Top secret stuff.',
             'needed_skill_text': 'Stealth'
         }
-        response = self.client.post(self.create_url, unauth_data, format='json')
+        response = self.client.post(self.url, unauth_data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
         self.assertEqual(Project.objects.count(), 0)
@@ -56,7 +56,7 @@ class ProjectCreateAPIViewTests(APITestCase):
         invalid_data = self.project_data.copy()
         del invalid_data['title']
         
-        response = self.client.post(self.create_url, invalid_data, format='json')
+        response = self.client.post(self.url, invalid_data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(Project.objects.count(), 0)
@@ -70,27 +70,26 @@ class ProjectCreateAPIViewTests(APITestCase):
             'needed_skill_text': ''
         }
         
-        response = self.client.post(self.create_url, minimal_data, format='json')
+        response = self.client.post(self.url, minimal_data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Project.objects.count(), 1)
         created_project = Project.objects.get(title=minimal_data['title'])
         
         self.assertEqual(response.data['title'], minimal_data['title'])
-        self.assertEqual(response.data['description'], '')
-        self.assertEqual(response.data['needed_skill_text'], '')
-        self.assertEqual(created_project.description, '')
-        self.assertEqual(created_project.needed_skill_text, '')
+        self.assertIsNone(response.data['description'])
+        self.assertIsNone(response.data['needed_skill_text'])
+        self.assertIsNone(created_project.description)
+        self.assertIsNone(created_project.needed_skill_text)
 
     def test_create_project_optional_fields_null(self):
-        # Note: DRF serializers usually treat null as blank for CharField unless allow_null=True
         null_data = {
             'title': 'Null Optional Fields Project',
             'description': None,
             'needed_skill_text': None
         }
         
-        response = self.client.post(self.create_url, null_data, format='json')
+        response = self.client.post(self.url, null_data, format='json')
         
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.data)
         self.assertEqual(Project.objects.count(), 1)

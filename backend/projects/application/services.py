@@ -1,27 +1,29 @@
 from ..domain.entities import Project
 from ..domain.repositories import AbstractProjectRepository
 from .dtos import ProjectCreateDTO, ProjectDTO
+from typing import List
+from uuid import UUID
 
 class ProjectService:
     def __init__(self, repository: AbstractProjectRepository):
         self._repository = repository
 
-    def create_project(self, data: ProjectCreateDTO) -> ProjectDTO:
+    def get_all_projects(self) -> List[ProjectDTO]:
+        """Retrieves all projects."""
+        projects = self._repository.get_all()
+        return [ProjectDTO.from_entity(p) for p in projects]
+
+    def create_project(self, project_data: ProjectCreateDTO, owner_id: UUID) -> ProjectDTO:
+        description = project_data.description if project_data.description != '' else None
+        needed_skill_text = project_data.needed_skill_text if project_data.needed_skill_text != '' else None
+
         project_entity = Project(
-            owner_id=data.owner_id,
-            title=data.title,
-            description=data.description,
-            needed_skill_text=data.needed_skill_text
+            owner_id=owner_id,
+            title=project_data.title,
+            description=description,
+            needed_skill_text=needed_skill_text
         )
         
         created_project = self._repository.add(project_entity)
 
-        return ProjectDTO(
-            id=created_project.id,
-            owner_id=created_project.owner_id,
-            title=created_project.title,
-            description=created_project.description,
-            needed_skill_text=created_project.needed_skill_text,
-            created_at=created_project.created_at.isoformat(),
-            updated_at=created_project.updated_at.isoformat(),
-        ) 
+        return ProjectDTO.from_entity(created_project)

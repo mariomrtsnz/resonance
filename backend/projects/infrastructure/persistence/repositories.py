@@ -42,6 +42,10 @@ class DjangoProjectRepository(AbstractProjectRepository):
         projects_orm = ProjectModel.objects.select_related('owner').filter(owner_id=owner_id)
         return [self._to_entity(p) for p in projects_orm]
 
+    def get_all(self) -> List[ProjectEntity]:
+        projects_orm = ProjectModel.objects.all().order_by("-created_at")
+        return [self._to_entity(p) for p in projects_orm]
+
     def _to_entity(self, project_orm: ProjectModel) -> ProjectEntity:
         return ProjectEntity(
             id=project_orm.id,

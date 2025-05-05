@@ -20,3 +20,7 @@ class AbstractProjectRepository(ABC):
     @abstractmethod
     def list_by_owner(self, owner_id: uuid.UUID) -> List[Project]:
         raise NotImplementedError
+
+    @abstractmethod
+    def get_all(self) -> List[Project]:
+        raise NotImplementedError
