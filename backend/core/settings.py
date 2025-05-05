@@ -139,7 +139,9 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'users.User'
+# Custom User model
+# AUTH_USER_MODEL = 'users.infrastructure.persistence.models.User' # Old path (Incorrect format)
+AUTH_USER_MODEL = 'users.User' # Correct format (Django standard)
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
