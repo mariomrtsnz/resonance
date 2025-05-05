@@ -1,0 +1,32 @@
+meta {
+  name: Create Project
+  type: http
+  seq: 3
+}
+
+post {
+  url: {{base_url}}/api/v1/projects/
+  body: json
+  auth: bearer
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "title": "My New Funk Track",
+    "description": "Looking for a bass player for a groovy funk song.",
+    "needed_skill_text": "Bass guitar, funk style, slap bass optional"
+  }
+}
+
+docs {
+  Creates a new project.
+}

@@ -17,6 +17,10 @@ body:json {
   }
 }
 
+vars:post-response {
+  authToken: res.body.access
+}
+
 assert {
   res.status: eq 200
   res.body.access: isDefined
