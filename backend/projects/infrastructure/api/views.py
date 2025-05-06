@@ -49,5 +49,18 @@ class ProjectListAPIView(generics.ListAPIView):
 
     def get_queryset(self):
         return self.project_service.get_all_projects()
+    
+class ProjectRetrieveAPIView(generics.RetrieveAPIView):
+    serializer_class = ProjectSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
-# Add ProjectRetrieveAPIView, ProjectUpdateAPIView, ProjectDestroyAPIView later 
+    @inject
+    def __init__(self,
+                 project_service: ProjectService = Provide[ProjectContainer.project_service],
+                 **kwargs):
+        self.project_service = project_service
+        super().__init__(**kwargs)
+        
+    def get_object(self):
+        project_id = self.kwargs.get('pk')
+        return self.project_service.get_project_by_id(project_id)

@@ -1,0 +1,19 @@
+meta {
+  name: Retrieve Project
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/api/v1/projects/:id/
+  body: none
+  auth: bearer
+}
+
+params:path {
+  id: b9f9db46-7ff9-4bc3-abcc-c226df2f3b09
+}
+
+auth:bearer {
+  token: {{authToken}}
+}

@@ -3,6 +3,7 @@ from unittest.mock import Mock, patch, ANY
 from uuid import uuid4, UUID
 from datetime import datetime
 
+from ...domain.exceptions import ProjectNotFoundError
 from ...application.services import ProjectService
 from ...application.dtos import ProjectCreateDTO, ProjectDTO
 from ...domain.entities import Project
@@ -114,6 +115,31 @@ class ProjectServiceTests(unittest.TestCase):
         self.mock_project_repo.get_all.assert_called_once()
         self.assertEqual(len(result_dtos), 0)
         self.assertEqual(result_dtos, [])
+
+    def test_get_project_by_id_success(self):
+        project_id = uuid4()
+        project = Project(id=project_id, owner_id=uuid4(), title="P1", description="D1", needed_skill_text="S1", created_at=datetime.now(), updated_at=datetime.now())
+        self.mock_project_repo.get_by_id.return_value = project
+        
+        result_dto = self.project_service.get_project_by_id(project_id)
+
+        self.mock_project_repo.get_by_id.assert_called_once_with(project_id)
+        self.assertIsInstance(result_dto, ProjectDTO)
+        self.assertEqual(result_dto.id, project.id)
+        self.assertEqual(result_dto.title, project.title)
+        self.assertEqual(result_dto.description, project.description)
+        self.assertEqual(result_dto.needed_skill_text, project.needed_skill_text)
+        self.assertEqual(result_dto.created_at, project.created_at.isoformat())
+        self.assertEqual(result_dto.updated_at, project.updated_at.isoformat())
+
+    def test_get_project_by_id_not_found(self):
+        project_id = uuid4()
+        self.mock_project_repo.get_by_id.return_value = None
+
+        with self.assertRaises(ProjectNotFoundError):
+            self.project_service.get_project_by_id(project_id)
+
+        self.mock_project_repo.get_by_id.assert_called_once_with(project_id)
 
 if __name__ == '__main__':
     unittest.main() 

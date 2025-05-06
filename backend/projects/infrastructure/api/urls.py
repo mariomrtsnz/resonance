@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import ProjectCreateAPIView, ProjectListAPIView
+from .views import ProjectCreateAPIView, ProjectListAPIView, ProjectRetrieveAPIView
 from rest_framework.views import APIView
 from rest_framework import permissions
 
@@ -15,7 +15,10 @@ class ProjectListCreateDispatchView(APIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get(self, request, *args, **kwargs):
-        view = ProjectListAPIView.as_view()
+        if 'pk' in kwargs:
+            view = ProjectRetrieveAPIView.as_view()
+        else:
+            view = ProjectListAPIView.as_view()
         return view(request._request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
@@ -24,4 +27,5 @@ class ProjectListCreateDispatchView(APIView):
 
 urlpatterns = [
     path('', ProjectListCreateDispatchView.as_view(), name='project-list-create'),
+    path('<uuid:pk>/', ProjectRetrieveAPIView.as_view(), name='project-retrieve'),
 ] 

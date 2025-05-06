@@ -3,13 +3,13 @@ from ..domain.repositories import AbstractProjectRepository
 from .dtos import ProjectCreateDTO, ProjectDTO
 from typing import List
 from uuid import UUID
+from ..domain.exceptions import ProjectNotFoundError
 
 class ProjectService:
     def __init__(self, repository: AbstractProjectRepository):
         self._repository = repository
 
     def get_all_projects(self) -> List[ProjectDTO]:
-        """Retrieves all projects."""
         projects = self._repository.get_all()
         return [ProjectDTO.from_entity(p) for p in projects]
 
@@ -27,3 +27,11 @@ class ProjectService:
         created_project = self._repository.add(project_entity)
 
         return ProjectDTO.from_entity(created_project)
+    
+    def get_project_by_id(self, project_id: UUID) -> ProjectDTO:
+        project = self._repository.get_by_id(project_id)
+
+        if not project:
+            raise ProjectNotFoundError(f"Project with id {project_id} not found")
+        
+        return ProjectDTO.from_entity(project)

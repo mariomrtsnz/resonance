@@ -5,12 +5,9 @@ from django.contrib.auth.hashers import make_password
 from django.db import IntegrityError
 
 from .dtos import UserRegistrationDTO, UserDTO
-from users.domain.entities import User as DomainUser 
-from users.domain.repositories import AbstractUserRepository
-
-class UserRegistrationError(Exception):
-    pass
-
+from ..domain.entities import User as DomainUser 
+from ..domain.repositories import AbstractUserRepository
+from ..domain.exceptions import UserRegistrationError
 class UserService:
     def __init__(self, user_repository: AbstractUserRepository):
         self._user_repository = user_repository
