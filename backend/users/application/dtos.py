@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-import uuid
+from uuid import UUID
 
 @dataclass(frozen=True)
 class UserRegistrationDTO:
@@ -8,6 +8,6 @@ class UserRegistrationDTO:
 
 @dataclass(frozen=True)
 class UserDTO:
-    id: uuid.UUID
+    id: UUID
     email: str
     username: str 

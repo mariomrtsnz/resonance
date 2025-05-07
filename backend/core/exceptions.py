@@ -2,6 +2,7 @@ from rest_framework.views import exception_handler
 from rest_framework.response import Response
 from rest_framework import status
 from django.http import Http404
+from tags.domain.exceptions import SkillAlreadyExistsError, SkillNotFoundError
 from projects.domain.exceptions import ProjectNotFoundError
 from users.domain.exceptions import UserRegistrationError
 
@@ -19,6 +20,12 @@ def custom_exception_handler(exc, context):
         return Response({'detail': str(exc)}, status=status.HTTP_404_NOT_FOUND)
     
     if isinstance(exc, UserRegistrationError):
+        return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if isinstance(exc, SkillNotFoundError):
+        return Response({'detail': str(exc)}, status=status.HTTP_404_NOT_FOUND)
+
+    if isinstance(exc, SkillAlreadyExistsError):
         return Response({'detail': str(exc)}, status=status.HTTP_400_BAD_REQUEST)
 
     # Handle Django's Http404 (if it wasn't caught by DRF default handler for some reason)

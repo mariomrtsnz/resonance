@@ -1,4 +1,4 @@
-from ..domain.entities import Project
+from ..domain.entities import DomainProject
 from ..domain.repositories import AbstractProjectRepository
 from .dtos import ProjectCreateDTO, ProjectDTO
 from typing import List
@@ -17,7 +17,7 @@ class ProjectService:
         description = project_data.description if project_data.description != '' else None
         needed_skill_text = project_data.needed_skill_text if project_data.needed_skill_text != '' else None
 
-        project_entity = Project(
+        project_entity = DomainProject(
             owner_id=owner_id,
             title=project_data.title,
             description=description,

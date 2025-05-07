@@ -5,7 +5,6 @@ from projects.infrastructure.persistence.repositories import DjangoProjectReposi
 from projects.domain.repositories import AbstractProjectRepository
 
 class ProjectContainer(containers.DeclarativeContainer):
-    
     config = providers.Configuration()
 
     project_repository: providers.Provider[AbstractProjectRepository] = providers.Singleton(

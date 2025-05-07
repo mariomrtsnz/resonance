@@ -1,7 +1,7 @@
-import uuid
 from dataclasses import dataclass
 from typing import Optional
-from ..domain.entities import Project
+from uuid import UUID
+from ..domain.entities import DomainProject as DomainProject
 @dataclass(frozen=True)
 class ProjectCreateDTO:
     title: str
@@ -10,8 +10,8 @@ class ProjectCreateDTO:
 
 @dataclass(frozen=True)
 class ProjectDTO:
-    id: uuid.UUID
-    owner_id: uuid.UUID
+    id: UUID
+    owner_id: UUID
     title: str
     description: Optional[str]
     needed_skill_text: Optional[str]
@@ -19,7 +19,7 @@ class ProjectDTO:
     updated_at: str
 
     @classmethod
-    def from_entity(cls, entity: 'Project') -> 'ProjectDTO':
+    def from_entity(cls, entity: DomainProject) -> 'ProjectDTO':
         return cls(
             id=entity.id,
             owner_id=entity.owner_id,

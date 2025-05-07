@@ -6,7 +6,7 @@ from datetime import datetime
 from ...domain.exceptions import ProjectNotFoundError
 from ...application.services import ProjectService
 from ...application.dtos import ProjectCreateDTO, ProjectDTO
-from ...domain.entities import Project
+from ...domain.entities import DomainProject
 from ...domain.repositories import AbstractProjectRepository
 
 class ProjectServiceTests(unittest.TestCase):
@@ -23,7 +23,7 @@ class ProjectServiceTests(unittest.TestCase):
             needed_skill_text="Python, Django"
         )
         
-        created_project_entity = Project(
+        created_project_entity = DomainProject(
             id=uuid4(),
             owner_id=owner_id,
             title=create_dto.title,
@@ -40,7 +40,7 @@ class ProjectServiceTests(unittest.TestCase):
         
         call_args, _ = self.mock_project_repo.add.call_args
         added_project_arg = call_args[0]
-        self.assertIsInstance(added_project_arg, Project)
+        self.assertIsInstance(added_project_arg, DomainProject)
         self.assertEqual(added_project_arg.owner_id, owner_id)
         self.assertEqual(added_project_arg.title, create_dto.title)
         self.assertEqual(added_project_arg.description, create_dto.description)
@@ -63,7 +63,7 @@ class ProjectServiceTests(unittest.TestCase):
             needed_skill_text=""
         )
         
-        created_project_entity = Project(
+        created_project_entity = DomainProject(
             id=uuid4(),
             owner_id=owner_id,
             title=create_dto.title,
@@ -79,7 +79,7 @@ class ProjectServiceTests(unittest.TestCase):
         self.mock_project_repo.add.assert_called_once()
         call_args, _ = self.mock_project_repo.add.call_args
         added_project_arg = call_args[0]
-        self.assertIsInstance(added_project_arg, Project)
+        self.assertIsInstance(added_project_arg, DomainProject)
         self.assertIsNone(added_project_arg.description)
         self.assertIsNone(added_project_arg.needed_skill_text)
         
@@ -89,8 +89,8 @@ class ProjectServiceTests(unittest.TestCase):
         self.assertEqual(result_dto.title, create_dto.title)
 
     def test_get_all_projects_success(self):
-        project1 = Project(id=uuid4(), owner_id=uuid4(), title="P1", description="D1", needed_skill_text="S1", created_at=datetime.now(), updated_at=datetime.now())
-        project2 = Project(id=uuid4(), owner_id=uuid4(), title="P2", description="D2", needed_skill_text="S2", created_at=datetime.now(), updated_at=datetime.now())
+        project1 = DomainProject(id=uuid4(), owner_id=uuid4(), title="P1", description="D1", needed_skill_text="S1", created_at=datetime.now(), updated_at=datetime.now())
+        project2 = DomainProject(id=uuid4(), owner_id=uuid4(), title="P2", description="D2", needed_skill_text="S2", created_at=datetime.now(), updated_at=datetime.now())
         mock_projects = [project1, project2]
         self.mock_project_repo.get_all.return_value = mock_projects
 
@@ -118,7 +118,7 @@ class ProjectServiceTests(unittest.TestCase):
 
     def test_get_project_by_id_success(self):
         project_id = uuid4()
-        project = Project(id=project_id, owner_id=uuid4(), title="P1", description="D1", needed_skill_text="S1", created_at=datetime.now(), updated_at=datetime.now())
+        project = DomainProject(id=project_id, owner_id=uuid4(), title="P1", description="D1", needed_skill_text="S1", created_at=datetime.now(), updated_at=datetime.now())
         self.mock_project_repo.get_by_id.return_value = project
         
         result_dto = self.project_service.get_project_by_id(project_id)

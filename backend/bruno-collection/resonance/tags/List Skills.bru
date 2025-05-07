@@ -1,0 +1,20 @@
+meta {
+  name: List Skills
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/v1/tags/skills/
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+docs {
+  Retrieves a list of all skills.
+  Authentication: None required (IsAuthenticatedOrReadOnly)
+}

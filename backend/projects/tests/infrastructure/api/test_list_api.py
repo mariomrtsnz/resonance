@@ -8,7 +8,7 @@ from ....infrastructure.persistence.models import Project
 class ProjectListAPIViewTests(APITestCase):
 
     def setUp(self):
-        self.url = reverse('projects_api:project-list-create')
+        self.url = reverse('projects_api:project-list')
         user_email = 'testuser@example.com'
         self.test_user = User.objects.create_user(
             username=user_email,

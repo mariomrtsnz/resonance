@@ -13,14 +13,13 @@ class ProjectRetrieveAPIViewTests(APITestCase):
             email=user_email,
             password='testpassword123'
         )
-        self.project = Project.objects.create(
-            owner=self.test_user,
-            title="Test Project",
-            description="Test Description",
-            needed_skill_text="Test Skill"
-        )
-
-        self.url = reverse('projects_api:project-retrieve', kwargs={'pk': self.project.id})        
+        self.project_data = {
+            'title': 'Test Project for Retrieve',
+            'description': 'A project to test retrieval.',
+            'needed_skill_text': 'Testing skills'
+        }
+        self.project = Project.objects.create(owner=self.test_user, **self.project_data)
+        self.url = reverse('projects_api:project-detail', kwargs={'pk': self.project.id})
 
         other_user_email = 'otheruser@example.com'
         self.other_user = User.objects.create_user(
@@ -47,7 +46,7 @@ class ProjectRetrieveAPIViewTests(APITestCase):
 
     def test_retrieve_project_not_found(self):
         self.client.force_authenticate(user=self.test_user)
-        url = reverse('projects_api:project-retrieve', kwargs={'pk': uuid.uuid4()})
+        url = reverse('projects_api:project-detail', kwargs={'pk': uuid.uuid4()})
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 

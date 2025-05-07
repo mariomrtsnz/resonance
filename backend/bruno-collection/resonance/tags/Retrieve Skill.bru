@@ -1,0 +1,31 @@
+meta {
+  name: Retrieve Skill
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{base_url}}/api/v1/tags/skills/:skillId/
+  body: none
+  auth: bearer
+}
+
+params:path {
+  skillId: {{createdSkillId}}
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+assert {
+  res.status: eq 200
+  res.body.id: isDefined
+  res.body.name: isDefined
+}
+
+docs {
+  Retrieves a specific skill by its ID.
+  `skillId` can be set manually or from the `createdSkillId` variable after running "Create Skill".
+  Authentication: None required (IsAuthenticatedOrReadOnly)
+}

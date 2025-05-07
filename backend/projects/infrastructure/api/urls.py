@@ -1,31 +1,12 @@
-from django.urls import path
-from .views import ProjectCreateAPIView, ProjectListAPIView, ProjectRetrieveAPIView
-from rest_framework.views import APIView
-from rest_framework import permissions
+from django.urls import include, path
+from rest_framework.routers import DefaultRouter
+from .views import ProjectViewSet
 
 app_name = 'projects_api'
 
+router = DefaultRouter()
+router.register(r'', ProjectViewSet, basename='project')
+
 urlpatterns = [
-    path('', ProjectListAPIView.as_view(), name='project-list'),
-    path('', ProjectCreateAPIView.as_view(), name='project-create'),
+    path('', include(router.urls)),
 ]
-
-class ProjectListCreateDispatchView(APIView):
-    """Dispatches GET to List view and POST to Create view."""
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get(self, request, *args, **kwargs):
-        if 'pk' in kwargs:
-            view = ProjectRetrieveAPIView.as_view()
-        else:
-            view = ProjectListAPIView.as_view()
-        return view(request._request, *args, **kwargs)
-
-    def post(self, request, *args, **kwargs):
-        view = ProjectCreateAPIView.as_view()
-        return view(request._request, *args, **kwargs)
-
-urlpatterns = [
-    path('', ProjectListCreateDispatchView.as_view(), name='project-list-create'),
-    path('<uuid:pk>/', ProjectRetrieveAPIView.as_view(), name='project-retrieve'),
-] 

@@ -1,0 +1,43 @@
+meta {
+  name: Update Skill
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{base_url}}/api/v1/tags/skills/:skillIdToUpdate/
+  body: json
+  auth: bearer
+}
+
+params:path {
+  skillIdToUpdate: {{createdSkillId}}
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+body:json {
+  {
+    "name": "Logic Pro X"
+  }
+}
+
+assert {
+  res.status: eq 200
+  res.body.name: eq "Studio One 7"
+  res.body.id: eq {{createdSkillId}}
+}
+
+docs {
+  Updates an existing skill.
+  Requires authentication (Admin/Staff for this example).
+  Set `authToken` in the environment.
+  `skillIdToUpdate` can be set manually or from `createdSkillId`.
+}

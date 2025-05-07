@@ -1,0 +1,32 @@
+meta {
+  name: Delete Skill
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{base_url}}/api/v1/tags/skills/:skillIdToDelete/
+  body: none
+  auth: bearer
+}
+
+auth:bearer {
+  token: {{authToken}}
+}
+
+params:path {
+  skillIdToDelete: {{createdSkillId}}
+}
+
+assert {
+  res.status: eq 204
+}
+
+docs {
+  Deletes a skill.
+  Requires authentication (Admin/Staff for this example).
+  Set `authToken` in the environment.
+  `skillIdToDelete` can be set manually or from `createdSkillId`.
+  After running this, the skill will be gone. You might need to re-run "Create Skill"
+  to test other operations like Retrieve or Update again.
+}
